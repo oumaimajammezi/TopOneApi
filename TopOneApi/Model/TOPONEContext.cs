@@ -17,7 +17,7 @@ namespace TopOneApi.Model
             : base(options)
         {
         }
-
+        public virtual DbSet<Param> Params { get; set; }
         public virtual DbSet<AdresseClient> AdresseClients { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
         public virtual DbSet<AssociationProd> AssociationProds { get; set; }
@@ -883,6 +883,25 @@ namespace TopOneApi.Model
                     .HasMaxLength(20)
                     .HasColumnName("IDPays");
             });
+            modelBuilder.Entity<Param>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("param");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Valeur)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("valeur");
+            });
 
             modelBuilder.Entity<GroupeClient>(entity =>
             {
@@ -891,6 +910,14 @@ namespace TopOneApi.Model
                 entity.Property(e => e.Id)
                     .HasColumnType("numeric(18, 0)")
                     .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Actif).HasColumnName("actif");
+
+                entity.Property(e => e.Designation)
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnName("designation")
+                    .HasDefaultValueSql("('')");
             });
 
             modelBuilder.Entity<HistoriqueConnexion>(entity =>

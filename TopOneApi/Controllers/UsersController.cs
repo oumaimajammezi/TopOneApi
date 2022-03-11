@@ -32,25 +32,23 @@ namespace TopOneApi.Controllers
             return await _context.Users.ToListAsync();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("authenthification")]
         public ActionResult authenthification([FromQuery] string idUser, string password)
         {
             try
-            {
-                bool trouve = false;
+            { 
                User MyUser= _context.Users.Where(x => x.Login == idUser && x.Password == password).FirstOrDefault();
+              
                 if (MyUser == null)
-                    trouve= false;
-                else trouve= true;
-                return Ok(trouve);
+                    return BadRequest(new { message = "Utilisateur ou mot de passe incorrect" });
+                else
+                    return Ok(MyUser);                 
             }
-
             catch (Exception ex)
             {
                 return BadRequest(Utile.LogAG(ex));
             }
-
         }
 
         // GET: api/Users/5
@@ -68,8 +66,7 @@ namespace TopOneApi.Controllers
         }
 
         // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+          [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, User user)
         {
             if (id != user.Login)

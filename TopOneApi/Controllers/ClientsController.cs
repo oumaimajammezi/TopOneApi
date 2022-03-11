@@ -78,10 +78,11 @@ namespace TopOneApi.Controllers
         public ActionResult getListClient()
         {
             try
-            {
-                
+            { 
                 var v = (from Clt in _context.Clients
-                         where (Clt.Actif.Equals(true))
+                         join grp1 in _context.GroupeClients on Clt.Idgroupe equals grp1.Id                        
+                         where Clt.Actif.Equals(true)
+                         orderby Clt.Idparain descending
                          select new
                          {
                              idClient = Clt.Id,
@@ -92,7 +93,8 @@ namespace TopOneApi.Controllers
                              TelGSM = Clt.TelGsm,
                              TelFixe = Clt.TelFixe,
                              Email = Clt.Email,
-                         }).Distinct(); 
+                             grade = grp1.Designation,
+                         }).Distinct();
 
                 return Ok(v.ToList());
             }

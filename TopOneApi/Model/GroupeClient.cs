@@ -7,7 +7,7 @@ namespace TopOneApi.Model
 {
     public partial class GroupeClient
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
         public string Designation { get; set; }
         public bool Actif { get; set; }
     }

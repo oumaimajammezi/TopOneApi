@@ -885,7 +885,8 @@ namespace TopOneApi.Model
             });
             modelBuilder.Entity<Param>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.Code);
+
 
                 entity.ToTable("param");
 

@@ -77,10 +77,11 @@ namespace TopOneApi.Controllers
         public ActionResult GetListeProduit()
         {
             try
-            {
-                var   v = (from Prod in _context.Produits
-                         join Cat in _context.CategorieProduits on Prod.Categorie equals (Cat.Id)
-                         orderby Prod.Id descending
+            { 
+               
+                   var v = (from Prod in _context.Produits
+                            join Cat in _context.CategorieProduits on Prod.Categorie equals (Cat.Id)
+                            orderby Prod.Id descending 
                          select new
                          {
                              id = Prod.Id,
@@ -88,33 +89,12 @@ namespace TopOneApi.Controllers
                              reference = Prod.Reference,
                              Categorie = Cat.Designation,
                              prixBase = Prod.PrixVenteTtc,
-                             prixFinal = Prod.PrixVenteTtc,
-                             quantite = 0, // a verifer 
+                             prixFinal = Prod.PrixVenteTtc, 
+                             quantite = Prod.QteStk, 
                              Etat = Prod.Etat,
 
                          }).Distinct();
-
-
-               //if ( v.ToList().Count > (((PageNumber - 1) * PageSize) + PageSize)&& PageSize>0)
-               
-               //     v = (from Prod in _context.Produits
-               //             join Cat in _context.CategorieProduits on Prod.Categorie equals (Cat.Id)
-               //             orderby Prod.Id descending
-               //          select new
-               //          {
-               //              id = Prod.Id,
-               //              designation = Prod.Designation,
-               //              reference = Prod.Reference,
-               //              Categorie = Cat.Designation,
-               //              prixBase = Prod.PrixVenteTtc,
-               //              prixFinal = Prod.PrixVenteTtc,
-               //              quantite =0, // a verifer 
-               //              Etat = Prod.Etat, 
-
-               //          }).Distinct().Skip((PageNumber-1) * PageSize ).Take(PageSize);
-               
-               //else
-               //     if()
+ 
                 return Ok(v.ToList());
             }
             catch (Exception ex)
@@ -230,6 +210,7 @@ namespace TopOneApi.Controllers
                 AncienProd.CaracteristiqueIdcomposition = MyProduit.CaracteristiqueIdcomposition;
                 AncienProd.CaracteristiqueIdstyle = MyProduit.CaracteristiqueIdstyle;
                 AncienProd.CaracteristiqueIdpropriete = MyProduit.CaracteristiqueIdpropriete;
+                AncienProd.QteStk = MyProduit.QteStk;
 
                 _context.Update(AncienProd);
 

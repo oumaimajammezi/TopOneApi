@@ -13,6 +13,8 @@ namespace TopOneApi.Model
         public bool Actif { get; set; }
         public int Visibilite { get; set; }
         public bool DisponibiliteALaVente { get; set; }
+        
+        public decimal QteStk { get; set; }
         public bool AfficherPrix { get; set; }
         public bool ExclusiveWeb { get; set; }
         public int Etat { get; set; }

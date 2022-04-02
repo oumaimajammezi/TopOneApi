@@ -1100,8 +1100,10 @@ namespace TopOneApi.Model
                 entity.Property(e => e.Id).HasMaxLength(20);
 
                 entity.Property(e => e.Acessoire).IsRequired();
-
+                
                 entity.Property(e => e.AfficherPrix).HasColumnName("Afficher_Prix");
+
+                entity.Property(e => e.QteStk).HasColumnName("QteStk");
 
                 entity.Property(e => e.CaracteristiqueHauteur)
                     .IsRequired()

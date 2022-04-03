@@ -25,7 +25,7 @@ namespace TopOneApi.Model
         public virtual DbSet<AttributProduit> AttributProduits { get; set; }
         public virtual DbSet<CategorieProduit> CategorieProduits { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
-        public virtual DbSet<Commande> Commandes { get; set; }
+        //public virtual DbSet<Commande> Commandes { get; set; }
         public virtual DbSet<Composition> Compositions { get; set; }
         public virtual DbSet<CompositionProduit> CompositionProduits { get; set; }
         public virtual DbSet<DeclinaisonProduit> DeclinaisonProduits { get; set; }
@@ -292,20 +292,20 @@ namespace TopOneApi.Model
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<Commande>(entity =>
-            {
-                entity.HasNoKey();
+            //modelBuilder.Entity<Commande>(entity =>
+            //{
+            //    //entity.HasNoKey();
+            //    entity.HasKey(e => e.Id);
+            //    entity.ToTable("commande");
 
-                entity.ToTable("commande");
+            //    entity.Property(e => e.Id)
+            //        .HasColumnType("numeric(18, 0)")
+            //        .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
+            //    entity.Property(e => e.IdClient).HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.IdClient).HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.IdEtatCmd).HasColumnType("numeric(18, 0)");
-            });
+            //    entity.Property(e => e.IdEtatCmd).HasColumnType("numeric(18, 0)");
+            //});
 
             modelBuilder.Entity<Composition>(entity =>
             {
@@ -1314,6 +1314,15 @@ namespace TopOneApi.Model
                 entity.Property(e => e.UserCreation)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+            modelBuilder.Entity<Date>(entity =>
+            {
+                entity.HasKey(e => new { e.DateCreation });
+
+                entity.ToTable("Date");
+
+                entity.Property(e => e.DateCreation).HasColumnType("datetime");
+  
             });
 
             modelBuilder.Entity<Valeur>(entity =>

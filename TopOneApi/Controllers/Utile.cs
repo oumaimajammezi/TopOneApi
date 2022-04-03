@@ -34,10 +34,10 @@ namespace TopOneApi.Controllers
         {
             try
             {
-
-                var test = dbContext
-                   .Set<User>()
-                   .FromSqlRaw("SELECT '1' AS Code,'1' AS code_article,'1' AS Libelle,convert(numeric(18,0),0)  as Quantite,  GETDATE() AS Date_creation , '' as User_creation , convert(bit,0) as Actif ,'' as  CodeUnite , convert(bit,0) as UtiliseParDefault,'' as Nature,convert(numeric(18,0),0)  as PoidsTotal ")
+               
+        var test = dbContext
+                   .Set<Date>()
+                   .FromSqlRaw("SELECT   GETDATE() AS DateCreation  ")
                    .First();
 
                 return (DateTime)test.DateCreation;

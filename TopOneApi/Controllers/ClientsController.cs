@@ -43,36 +43,7 @@ namespace TopOneApi.Controllers
             return client;
         }
 
-        // PUT: api/Clients/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(string id, Client client)
-        {
-            if (id != client.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(client).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+     
         [HttpGet]
         [Route("getListClient")]
         public ActionResult getListClient()
@@ -101,6 +72,77 @@ namespace TopOneApi.Controllers
             catch (Exception ex)
             {
                 return BadRequest(Utile.LogAG(ex));
+            }
+        }
+        [HttpPut]
+        [Route("putClient")]
+        public ActionResult putClient([FromBody] Client MyClient)
+        {
+            #region Declaration 
+            Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction trans = null;
+
+            #endregion
+
+            try
+            {
+
+                trans = _context.Database.BeginTransaction();
+
+
+                var AncienClt = _context.Clients.Find(MyClient.Id);
+
+                if (AncienClt == null)
+                {
+                    throw new ArgumentException("Client N°" + MyClient.Id + " est introuvable  ", new Exception("Csys Group"));
+                }
+
+
+
+
+                //AncienClt.Id = MyClient.Id;
+                //AncienClt.Idparain = MyClient.Idparain;
+                //AncienClt.Idgroupe = MyClient.Idgroupe;
+                AncienClt.Nom = MyClient.Nom;
+                AncienClt.Prenom = MyClient.Prenom;
+                AncienClt.Cin = MyClient.Cin;
+                AncienClt.IdpieceCinrecto = MyClient.IdpieceCinrecto;
+                AncienClt.IdpieceCinverso = MyClient.IdpieceCinverso;
+                AncienClt.Societe = MyClient.Societe;
+                AncienClt.MatriculeFiscal = MyClient.MatriculeFiscal;
+                AncienClt.TelGsm = MyClient.TelGsm;
+                AncienClt.TelFixe = MyClient.TelFixe;
+                AncienClt.Email = MyClient.Email;
+                AncienClt.DateNaissance = MyClient.DateNaissance;
+                AncienClt.Adresse = MyClient.Adresse;
+                AncienClt.Ville = MyClient.Ville;
+                AncienClt.Pays = MyClient.Pays;
+                AncienClt.CodePostal = MyClient.CodePostal;
+                AncienClt.Login = MyClient.Login;
+                AncienClt.MotPasse = MyClient.MotPasse;
+                AncienClt.DateInscription = MyClient.DateInscription;
+                AncienClt.DerniereVisite = MyClient.DerniereVisite;
+                AncienClt.Sexe = MyClient.Sexe;
+                AncienClt.Sdebit = MyClient.Sdebit;
+                AncienClt.Scredit = MyClient.Scredit;
+                AncienClt.Note = MyClient.Note;
+                AncienClt.Actif = MyClient.Actif;
+
+                _context.Update(AncienClt);
+
+
+                /// l'access groupe 
+                _context.SaveChanges();
+                trans.Commit();
+                return Ok("Modifié avec succée");
+
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+
+                return BadRequest(Utile.LogAG(ex));
+
+
             }
         }
 

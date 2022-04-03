@@ -185,37 +185,7 @@ namespace TopOneApi.Controllers
             return categorieProduit;
         }
 
-        // PUT: api/CategorieProduits/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategorieProduit(decimal id, CategorieProduit categorieProduit)
-        {
-            if (id != categorieProduit.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(categorieProduit).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategorieProduitExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
+     
         // POST: api/CategorieProduits
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

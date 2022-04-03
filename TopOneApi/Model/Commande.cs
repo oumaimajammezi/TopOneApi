@@ -7,8 +7,7 @@ namespace TopOneApi.Model
 {
     public partial class Commande
     {
-        public decimal Id { get; set; }
-        public decimal IdClient { get; set; }
-        public decimal IdEtatCmd { get; set; }
+        public List< DetCommandeClient> DetCmd { get; set; }
+        public EntCommandeClient EntCmd { get; set; } 
     }
 }

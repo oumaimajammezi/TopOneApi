@@ -27,7 +27,7 @@ namespace TopOneApi.Controllers
         [Route("postCommande")]
         public ActionResult postCommande([FromBody] Commande MyCommande)
         {
-            #region Declaration 
+            #region Declaration <
             Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction trans = null;
 
             #endregion
@@ -112,6 +112,72 @@ namespace TopOneApi.Controllers
                 return BadRequest(Utile.LogAG(ex));
             }
         }
+
+
+
+
+
+        [HttpGet]
+        [Route("GetListeCommandeParIdClient")]
+        public ActionResult GetListeCommandeParIdClient(string idClient)
+        {
+            try
+            {
+                var v = (from ent in _context.EntCommandeClients
+                         join det in _context.DetCommandeClients on ent.NumPiece equals det.NumPiece
+                         join cli in _context.Clients on ent.Idclient equals cli.Id
+                         join adrLivraison in _context.AdresseClients on ent.IdadresseLivraiconClient equals adrLivraison.Id into gj
+                         from adrLivraison in gj.DefaultIfEmpty()
+                         join adrfacturation in _context.AdresseClients on ent.IdadresseFacturationClient equals adrfacturation.Id into gj2
+                         from adrfacturation in gj2.DefaultIfEmpty()
+
+
+                         join vilFact in _context.Villes on adrfacturation.Idville equals vilFact.Id into gv2
+                         from vilFact in gv2.DefaultIfEmpty()
+
+                         join vilLaiv in _context.Villes on adrLivraison.Idville equals vilLaiv.Id into gvL2
+                         from vilLaiv in gvL2.DefaultIfEmpty()
+
+
+                         where cli.Id.Equals(idClient)
+                         orderby ent.DateCreation descending
+                         select new
+                         {
+                             id_client = cli.Id,
+                             Idparain = cli.Idparain,
+                             Idgroupe = cli.Idgroupe,
+                             Nom = cli.Nom,
+                             Prenom = cli.Prenom,
+                             Cin = cli.Cin,
+
+                             NumPiece = ent.NumPiece,
+                             DatPiece = ent.DatPiece,
+                             TypPiece = ent.TypPiece,
+                             Depot = ent.Depot,
+                             TmntHt = ent.TmntHt,
+                             TmntTva = ent.TmntTva,
+                             Tremise = ent.Tremise,
+                             TmntTtc = ent.TmntTtc,
+                             Payement = ent.Payement,
+                             EtatPiece = ent.EtatPiece,
+                             EtatMail = ent.EtatMail,
+                             DateCreation = ent.DateCreation  ,
+
+                             adresseLivraiconClient = adrLivraison.Adresse,
+                             adresseFacturationClient = adrfacturation.Adresse  ,
+
+                             VilleLivraiconClient = vilLaiv.DesVille,
+                             villeFacturationClient = vilFact.DesVille,
+                         }).Distinct();
+
+                return Ok(v.ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(Utile.LogAG(ex));
+            }
+        }
+
 
     }
 }

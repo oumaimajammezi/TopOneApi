@@ -43,7 +43,7 @@ namespace TopOneApi.Controllers
                 if (MyUser == null)
                     return BadRequest(new { message = "Utilisateur ou mot de passe incorrect" });
                 else
-                    return Ok(MyUser);                 
+                    return Ok(idUser);                 
             }
             catch (Exception ex)
             {

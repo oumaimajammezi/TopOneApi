@@ -77,25 +77,83 @@ namespace TopOneApi.Controllers
         public ActionResult GetListeProduit()
         {
             try
-            { 
-               
-                   var v = (from Prod in _context.Produits
-                            join Cat in _context.CategorieProduits on Prod.Categorie equals (Cat.Id)
-                            orderby Prod.Id descending 
-                         select new
-                         {
-                             id = Prod.Id,
-                             designation = Prod.Designation,
-                             reference = Prod.Reference,
-                             Categorie = Cat.Designation,
-                             prixBase = Prod.PrixVenteTtc,
-                             prixFinal = Prod.PrixVenteTtc, 
-                             quantite = Prod.QteStk, 
-                             Etat = Prod.Etat,
+            {
 
-                         }).Distinct();
- 
-                return Ok(v.ToList());
+                //var v = (from Prod in _context.Produits
+                //         join Cat in _context.CategorieProduits on Prod.Categorie equals (Cat.Id)
+                //         orderby Prod.Id descending 
+                //      select new
+                //      {
+                //          id = Prod.Id,
+                //          designation = Prod.Designation,
+                //          reference = Prod.Reference,
+                //          Categorie = Cat.Designation,
+                //          prixBase = Prod.PrixVenteTtc,
+                //          prixFinal = Prod.PrixVenteTtc, 
+                //          quantite = Prod.QteStk, 
+                //          Etat = Prod.Etat,
+
+                //      }).Distinct();
+
+                List<Produit> MyListProd = _context.Produits.Where(x => x.Actif.Equals(true)).ToList();
+
+                List<TmpProduitImg> RetListe = new List<TmpProduitImg>();
+
+                foreach (var obj in MyListProd)
+                {
+                    TmpProduitImg myTmp = new TmpProduitImg();
+
+                    myTmp.Id = obj.Id;
+                    myTmp.Designation = obj.Designation;
+                    myTmp.Reference = obj.Reference;
+                    myTmp.Actif = obj.Actif;
+                    myTmp.Visibilite = obj.Visibilite;
+                    myTmp.DisponibiliteALaVente = obj.DisponibiliteALaVente;
+                    myTmp.QteStk = obj.QteStk;
+                    myTmp.AfficherPrix = obj.AfficherPrix;
+                    myTmp.ExclusiveWeb = obj.ExclusiveWeb;
+                    myTmp.Etat = obj.Etat;
+                    myTmp.Resume = obj.Resume;
+                    myTmp.Description = obj.Description;
+                    myTmp.MotsCles = obj.MotsCles;
+                    myTmp.PrixAchatHt = obj.PrixAchatHt;
+                    myTmp.CodeTva = obj.CodeTva;
+                    myTmp.DesTva = obj.DesTva;
+                    myTmp.Marge = obj.Marge;
+                    myTmp.PrixVenteHt = obj.PrixVenteHt;
+                    myTmp.PrixVenteTtc = obj.PrixVenteTtc;
+                    myTmp.AfficherBandoPromo = obj.AfficherBandoPromo;
+                    myTmp.Marque = obj.Marque;
+                    myTmp.Categorie = obj.Categorie;
+                    myTmp.Fabriquant = obj.Fabriquant;
+                    myTmp.Acessoire = obj.Acessoire;
+                    myTmp.LargeurDuColis = obj.LargeurDuColis;
+                    myTmp.HauteurColis = obj.HauteurColis;
+                    myTmp.ProfondeurColis = obj.ProfondeurColis;
+                    myTmp.PoidsColis = obj.PoidsColis;
+                    myTmp.FraisPortSupplimentaire = obj.FraisPortSupplimentaire;
+                    myTmp.Transporteur = obj.Transporteur;
+                    myTmp.Declinaison = obj.Declinaison;
+                    myTmp.GestionStockAvance = obj.GestionStockAvance;
+                    myTmp.StockEntrepot = obj.StockEntrepot;
+                    myTmp.StockManuel = obj.StockManuel;
+                    myTmp.RuptureAnnulerCommande = obj.RuptureAnnulerCommande;
+                    myTmp.RuptureAccepteCommande = obj.RuptureAccepteCommande;
+                    myTmp.RuptureDefaut = obj.RuptureDefaut;
+                    myTmp.CaracteristiqueHauteur = obj.CaracteristiqueHauteur;
+                    myTmp.CaracteristiqueLargeur = obj.CaracteristiqueLargeur;
+                    myTmp.CaracteristiqueProfondeur = obj.CaracteristiqueProfondeur;
+                    myTmp.CaracteristiquePoids = obj.CaracteristiquePoids;
+                    myTmp.CaracteristiqueIdcomposition = obj.CaracteristiqueIdcomposition;
+                    myTmp.CaracteristiqueIdstyle = obj.CaracteristiqueIdstyle;
+                    myTmp.CaracteristiqueIdpropriete = obj.CaracteristiqueIdpropriete;
+                    myTmp.Categorie = obj.Categorie;
+                    myTmp.ImgProd = _context.ImageProduits.Where(x => x.Idproduit.Equals(myTmp.Id)).ToList();
+                    RetListe.Add(myTmp);
+                }
+
+
+                return Ok(RetListe);
             }
             catch (Exception ex)
             {
@@ -104,7 +162,7 @@ namespace TopOneApi.Controllers
         }
         [HttpPost]
         [Route("postProduit")]
-        public ActionResult postProduit([FromBody] Produit MyProduit)
+        public ActionResult postProduit([FromBody] TmpProduitImg MyTmpProduit)
         {
             #region Declaration 
             Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction trans = null;
@@ -115,19 +173,79 @@ namespace TopOneApi.Controllers
             {
 
                 trans = _context.Database.BeginTransaction();
-                //  DateTime DatSys = new Utile().GetDateSystem(_context);
-
+                
                 #region Get Compteur
                 Param myparam = _context.Params.Find("CompteurProduit");
-                 
-                string Compteur  = myparam.Valeur;
 
+                string Compteur = myparam.Valeur;
+                Param myparam2 = _context.Params.Find("CompteurImage");
+
+                string CompteurImage = myparam2.Valeur;
                 #endregion
 
+                Produit MyProduit = new Produit();
                 MyProduit.Id = Compteur;
+                MyProduit.Designation = MyTmpProduit.Designation;
+                MyProduit.Reference = MyTmpProduit.Reference;
+                MyProduit.Actif = MyTmpProduit.Actif;
+                MyProduit.Visibilite = MyTmpProduit.Visibilite;
+                MyProduit.DisponibiliteALaVente = MyTmpProduit.DisponibiliteALaVente;
+                MyProduit.QteStk = MyTmpProduit.QteStk;
+                MyProduit.AfficherPrix = MyTmpProduit.AfficherPrix;
+                MyProduit.ExclusiveWeb = MyTmpProduit.ExclusiveWeb;
+                MyProduit.Etat = MyTmpProduit.Etat;
+                MyProduit.Resume = MyTmpProduit.Resume;
+                MyProduit.Description = MyTmpProduit.Description;
+                MyProduit.MotsCles = MyTmpProduit.MotsCles;
+                MyProduit.PrixAchatHt = MyTmpProduit.PrixAchatHt;
+                MyProduit.CodeTva = MyTmpProduit.CodeTva;
+                MyProduit.DesTva = MyTmpProduit.DesTva;
+                MyProduit.Marge = MyTmpProduit.Marge;
+                MyProduit.PrixVenteHt = MyTmpProduit.PrixVenteHt;
+                MyProduit.PrixVenteTtc = MyTmpProduit.PrixVenteTtc;
+                MyProduit.AfficherBandoPromo = MyTmpProduit.AfficherBandoPromo;
+                MyProduit.Marque = MyTmpProduit.Marque;
+                MyProduit.Categorie = MyTmpProduit.Categorie;
+                MyProduit.Fabriquant = MyTmpProduit.Fabriquant;
+                MyProduit.Acessoire = MyTmpProduit.Acessoire;
+                MyProduit.LargeurDuColis = MyTmpProduit.LargeurDuColis;
+                MyProduit.HauteurColis = MyTmpProduit.HauteurColis;
+                MyProduit.ProfondeurColis = MyTmpProduit.ProfondeurColis;
+                MyProduit.PoidsColis = MyTmpProduit.PoidsColis;
+                MyProduit.FraisPortSupplimentaire = MyTmpProduit.FraisPortSupplimentaire;
+                MyProduit.Transporteur = MyTmpProduit.Transporteur;
+                MyProduit.Declinaison = MyTmpProduit.Declinaison;
+                MyProduit.GestionStockAvance = MyTmpProduit.GestionStockAvance;
+                MyProduit.StockEntrepot = MyTmpProduit.StockEntrepot;
+                MyProduit.StockManuel = MyTmpProduit.StockManuel;
+                MyProduit.RuptureAnnulerCommande = MyTmpProduit.RuptureAnnulerCommande;
+                MyProduit.RuptureAccepteCommande = MyTmpProduit.RuptureAccepteCommande;
+                MyProduit.RuptureDefaut = MyTmpProduit.RuptureDefaut;
+                MyProduit.CaracteristiqueHauteur = MyTmpProduit.CaracteristiqueHauteur;
+                MyProduit.CaracteristiqueLargeur = MyTmpProduit.CaracteristiqueLargeur;
+                MyProduit.CaracteristiqueProfondeur = MyTmpProduit.CaracteristiqueProfondeur;
+                MyProduit.CaracteristiquePoids = MyTmpProduit.CaracteristiquePoids;
+                MyProduit.CaracteristiqueIdcomposition = MyTmpProduit.CaracteristiqueIdcomposition;
+                MyProduit.CaracteristiqueIdstyle = MyTmpProduit.CaracteristiqueIdstyle;
+                MyProduit.CaracteristiqueIdpropriete = MyTmpProduit.CaracteristiqueIdpropriete;
+
                 _context.Produits.Add(MyProduit);
 
-                myparam.Valeur = (Int32.Parse(myparam.Valeur) + 1).ToString(); 
+                int i = 0;
+                foreach (var obj in MyTmpProduit.ImgProd)
+                {
+                    if (i != 0)
+                        CompteurImage = (Int32.Parse(CompteurImage) + 1).ToString();
+
+                    obj.Idproduit = MyProduit.Id;
+                    obj.Idimage = CompteurImage;
+
+                    _context.ImageProduits.Add(obj);
+                    i++;
+                }
+                myparam.Valeur = (Int32.Parse(myparam.Valeur) + 1).ToString();
+
+                myparam2.Valeur = (Int32.Parse(CompteurImage) + 1).ToString();
 
                 /// l'access groupe 
                 _context.SaveChanges();
@@ -140,7 +258,7 @@ namespace TopOneApi.Controllers
                 trans.Rollback();
 
                 return BadRequest(Utile.LogAG(ex));
-                 
+
             }
         }
 

@@ -969,21 +969,37 @@ namespace TopOneApi.Model
 
             modelBuilder.Entity<ImageProduit>(entity =>
             {
-                entity.HasKey(e => new { e.Idimage, e.Idproduit });
+                entity.HasKey(e => new { e.Idimage, e.Idproduit,e.Couleur });
 
                 entity.ToTable("ImageProduit");
 
-                entity.Property(e => e.Idimage)
-                    .HasMaxLength(20)
-                    .HasColumnName("IDImage");
-
-                entity.Property(e => e.Idproduit)
-                    .HasMaxLength(20)
-                    .HasColumnName("IDProduit");
+                entity.Property(e => e.Couleur)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasDefaultValueSql("('')");
 
                 entity.Property(e => e.Extention)
                     .IsRequired()
                     .HasMaxLength(20);
+
+                entity.Property(e => e.Idimage)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("IDImage");
+
+                entity.Property(e => e.Idproduit)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("IDProduit");
+
+                entity.Property(e => e.ImageData)
+                    .IsRequired()
+                    .HasColumnType("image");
+
+                entity.Property(e => e.Qte)
+                    .HasColumnType("decimal(18, 3)")
+                    .HasColumnName("qte");
+
             });
 
             modelBuilder.Entity<Impact>(entity =>

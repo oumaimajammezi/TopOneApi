@@ -29,7 +29,7 @@ namespace TopOneApi.Controllers
         }
         [HttpGet]
         [Route("GetListeCategorie")]
-        public ActionResult GetListeCategorie()
+        public ActionResult GetListeCategorie([FromQuery] PaginationFilter filter)
         {
             try
             { 
@@ -45,7 +45,8 @@ namespace TopOneApi.Controllers
                             
                          }).Distinct();
 
-                return Ok(v.ToList());
+                return Ok(v.Skip((filter.PageNumber - 1) * filter.PageSize)
+               .Take(filter.PageSize).ToList());
             }
             catch (Exception ex)
             {

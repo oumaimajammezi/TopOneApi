@@ -119,7 +119,7 @@ namespace TopOneApi.Controllers
 
         [HttpGet]
         [Route("GetListeCommandeParIdClient")]
-        public ActionResult GetListeCommandeParIdClient(string idClient)
+        public ActionResult GetListeCommandeParIdClient(string idClient, [FromQuery] PaginationFilter filter)
         {
             try
             {
@@ -170,14 +170,14 @@ namespace TopOneApi.Controllers
                              villeFacturationClient = vilFact.DesVille,
                          }).Distinct();
 
-                return Ok(v.ToList());
+                return Ok(v.Skip((filter.PageNumber - 1) * filter.PageSize)
+               .Take(filter.PageSize).ToList());
             }
             catch (Exception ex)
             {
                 return BadRequest(Utile.LogAG(ex));
             }
         }
-
 
     }
 }

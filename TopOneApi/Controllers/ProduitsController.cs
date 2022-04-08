@@ -74,11 +74,11 @@ namespace TopOneApi.Controllers
         }
         [HttpGet]
         [Route("GetListeProduit")]
-        public ActionResult GetListeProduit()
+        public ActionResult GetListeProduit([FromQuery] PaginationFilter filter)
         {
             try
             {
-
+              //  var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
                 //var v = (from Prod in _context.Produits
                 //         join Cat in _context.CategorieProduits on Prod.Categorie equals (Cat.Id)
                 //         orderby Prod.Id descending 
@@ -95,7 +95,9 @@ namespace TopOneApi.Controllers
 
                 //      }).Distinct();
 
-                List<Produit> MyListProd = _context.Produits.Where(x => x.Actif.Equals(true)).ToList();
+                List<Produit> MyListProd = _context.Produits.Where(x => x.Actif.Equals(true)).Skip((filter.PageNumber - 1) * filter.PageSize)
+               .Take(filter.PageSize)
+              .ToList();
 
                 List<TmpProduitImg> RetListe = new List<TmpProduitImg>();
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.Extensions.Configuration;
 
 #nullable disable
@@ -85,8 +87,11 @@ namespace TopOneApi.Model
                     string usr = configuration.GetConnectionString("Usr");
                     string serveur = configuration.GetConnectionString("Serveur");
                     string pwd = configuration.GetConnectionString("Pwd");
-                    optionsBuilder.UseSqlServer("Server=" + serveur + ";Database=" + db + ";user id=" + usr + ";Password=" + pwd + ";persist security info=False;MultipleActiveResultSets=True");
-                
+                optionsBuilder.UseSqlServer("Server=" + serveur + ";Database=" + db + ";user id=" + usr + ";Password=" + pwd + ";persist security info=False;MultipleActiveResultSets=True").ReplaceService<IQueryTranslationPostprocessorFactory, SqlServer2008QueryTranslationPostprocessorFactory>();
+            
+             //   services.AddDbContext<MyDbContext>(o =>
+             //o.UseSqlServer(Configuration.GetConnectionString("Default"))
+            
             }
         }
 

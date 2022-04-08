@@ -46,7 +46,7 @@ namespace TopOneApi.Controllers
      
         [HttpGet]
         [Route("getListClient")]
-        public ActionResult getListClient()
+        public ActionResult getListClient([FromQuery] PaginationFilter filter)
         {
             try
             { 
@@ -67,7 +67,8 @@ namespace TopOneApi.Controllers
                              grade = grp1.Designation,
                          }).Distinct();
 
-                return Ok(v.ToList());
+                return Ok(v.Skip((filter.PageNumber - 1) * filter.PageSize)
+               .Take(filter.PageSize).ToList());
             }
             catch (Exception ex)
             {

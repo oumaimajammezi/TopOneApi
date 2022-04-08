@@ -165,6 +165,7 @@ namespace TopOneApi.Controllers
         public ActionResult postProduit([FromBody] TmpProduitImg MyTmpProduit)
         {
             #region Declaration 
+
             Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction trans = null;
 
             #endregion
@@ -182,7 +183,7 @@ namespace TopOneApi.Controllers
 
                 string CompteurImage = myparam2.Valeur;
                 #endregion
-
+                #region Ajout produit 
                 Produit MyProduit = new Produit();
                 MyProduit.Id = Compteur;
                 MyProduit.Designation = MyTmpProduit.Designation;
@@ -230,6 +231,7 @@ namespace TopOneApi.Controllers
                 MyProduit.CaracteristiqueIdpropriete = MyTmpProduit.CaracteristiqueIdpropriete;
 
                 _context.Produits.Add(MyProduit);
+                #endregion
 
                 int i = 0;
                 foreach (var obj in MyTmpProduit.ImgProd)
@@ -265,7 +267,7 @@ namespace TopOneApi.Controllers
 
         [HttpPut]
         [Route("putProduit")]
-        public ActionResult putProduit([FromBody] Produit MyProduit)
+        public ActionResult putProduit([FromBody] TmpProduitImg MyTmpProduit)
         {
             #region Declaration 
             Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction trans = null;
@@ -277,62 +279,86 @@ namespace TopOneApi.Controllers
 
                 trans = _context.Database.BeginTransaction();
 
+                Param myparam2 = _context.Params.Find("CompteurImage");
+
+                string CompteurImage = myparam2.Valeur;
+
                 //  var obj1 = _context.CategorieProduits.Find(Mycategorie.Id);
 
-                var AncienProd = _context.Produits.Find(MyProduit.Id);
+                var AncienProd = _context.Produits.Find(MyTmpProduit.Id);
 
                 if (AncienProd == null)
                 {
-                    throw new ArgumentException("Produit N°" + MyProduit.Id + " est introuvable  ", new Exception("Csys Group"));
+                    throw new ArgumentException("Produit N°" + MyTmpProduit.Id + " est introuvable  ", new Exception("Csys Group"));
                 }
-                AncienProd.Id = MyProduit.Id;
-                AncienProd.Designation = MyProduit.Designation;
-                AncienProd.Reference = MyProduit.Reference;
-                AncienProd.Actif = MyProduit.Actif;
-                AncienProd.Visibilite = MyProduit.Visibilite;
-                AncienProd.DisponibiliteALaVente = MyProduit.DisponibiliteALaVente;
-                AncienProd.AfficherPrix = MyProduit.AfficherPrix;
-                AncienProd.ExclusiveWeb = MyProduit.ExclusiveWeb;
-                AncienProd.Etat = MyProduit.Etat;
-                AncienProd.Resume = MyProduit.Resume;
-                AncienProd.Description = MyProduit.Description;
-                AncienProd.MotsCles = MyProduit.MotsCles;
-                AncienProd.PrixAchatHt = MyProduit.PrixAchatHt;
-                AncienProd.CodeTva = MyProduit.CodeTva;
-                AncienProd.DesTva = MyProduit.DesTva;
-                AncienProd.Marge = MyProduit.Marge;
-                AncienProd.PrixVenteHt = MyProduit.PrixVenteHt;
-                AncienProd.PrixVenteTtc = MyProduit.PrixVenteTtc;
-                AncienProd.AfficherBandoPromo = MyProduit.AfficherBandoPromo;
-                AncienProd.Marque = MyProduit.Marque;
-                AncienProd.Categorie = MyProduit.Categorie;
-                AncienProd.Fabriquant = MyProduit.Fabriquant;
-                AncienProd.Acessoire = MyProduit.Acessoire;
-                AncienProd.LargeurDuColis = MyProduit.LargeurDuColis;
-                AncienProd.HauteurColis = MyProduit.HauteurColis;
-                AncienProd.ProfondeurColis = MyProduit.ProfondeurColis;
-                AncienProd.PoidsColis = MyProduit.PoidsColis;
-                AncienProd.FraisPortSupplimentaire = MyProduit.FraisPortSupplimentaire;
-                AncienProd.Transporteur = MyProduit.Transporteur;
-                AncienProd.Declinaison = MyProduit.Declinaison;
-                AncienProd.GestionStockAvance = MyProduit.GestionStockAvance;
-                AncienProd.StockEntrepot = MyProduit.StockEntrepot;
-                AncienProd.StockManuel = MyProduit.StockManuel;
-                AncienProd.RuptureAnnulerCommande = MyProduit.RuptureAnnulerCommande;
-                AncienProd.RuptureAccepteCommande = MyProduit.RuptureAccepteCommande;
-                AncienProd.RuptureDefaut = MyProduit.RuptureDefaut;
-                AncienProd.CaracteristiqueHauteur = MyProduit.CaracteristiqueHauteur;
-                AncienProd.CaracteristiqueLargeur = MyProduit.CaracteristiqueLargeur;
-                AncienProd.CaracteristiqueProfondeur = MyProduit.CaracteristiqueProfondeur;
-                AncienProd.CaracteristiquePoids = MyProduit.CaracteristiquePoids;
-                AncienProd.CaracteristiqueIdcomposition = MyProduit.CaracteristiqueIdcomposition;
-                AncienProd.CaracteristiqueIdstyle = MyProduit.CaracteristiqueIdstyle;
-                AncienProd.CaracteristiqueIdpropriete = MyProduit.CaracteristiqueIdpropriete;
-                AncienProd.QteStk = MyProduit.QteStk;
+                #region Update produit 
+                AncienProd.Id = MyTmpProduit.Id;
+                AncienProd.Designation = MyTmpProduit.Designation;
+                AncienProd.Reference = MyTmpProduit.Reference;
+                AncienProd.Actif = MyTmpProduit.Actif;
+                AncienProd.Visibilite = MyTmpProduit.Visibilite;
+                AncienProd.DisponibiliteALaVente = MyTmpProduit.DisponibiliteALaVente;
+                AncienProd.AfficherPrix = MyTmpProduit.AfficherPrix;
+                AncienProd.ExclusiveWeb = MyTmpProduit.ExclusiveWeb;
+                AncienProd.Etat = MyTmpProduit.Etat;
+                AncienProd.Resume = MyTmpProduit.Resume;
+                AncienProd.Description = MyTmpProduit.Description;
+                AncienProd.MotsCles = MyTmpProduit.MotsCles;
+                AncienProd.PrixAchatHt = MyTmpProduit.PrixAchatHt;
+                AncienProd.CodeTva = MyTmpProduit.CodeTva;
+                AncienProd.DesTva = MyTmpProduit.DesTva;
+                AncienProd.Marge = MyTmpProduit.Marge;
+                AncienProd.PrixVenteHt = MyTmpProduit.PrixVenteHt;
+                AncienProd.PrixVenteTtc = MyTmpProduit.PrixVenteTtc;
+                AncienProd.AfficherBandoPromo = MyTmpProduit.AfficherBandoPromo;
+                AncienProd.Marque = MyTmpProduit.Marque;
+                AncienProd.Categorie = MyTmpProduit.Categorie;
+                AncienProd.Fabriquant = MyTmpProduit.Fabriquant;
+                AncienProd.Acessoire = MyTmpProduit.Acessoire;
+                AncienProd.LargeurDuColis = MyTmpProduit.LargeurDuColis;
+                AncienProd.HauteurColis = MyTmpProduit.HauteurColis;
+                AncienProd.ProfondeurColis = MyTmpProduit.ProfondeurColis;
+                AncienProd.PoidsColis = MyTmpProduit.PoidsColis;
+                AncienProd.FraisPortSupplimentaire = MyTmpProduit.FraisPortSupplimentaire;
+                AncienProd.Transporteur = MyTmpProduit.Transporteur;
+                AncienProd.Declinaison = MyTmpProduit.Declinaison;
+                AncienProd.GestionStockAvance = MyTmpProduit.GestionStockAvance;
+                AncienProd.StockEntrepot = MyTmpProduit.StockEntrepot;
+                AncienProd.StockManuel = MyTmpProduit.StockManuel;
+                AncienProd.RuptureAnnulerCommande = MyTmpProduit.RuptureAnnulerCommande;
+                AncienProd.RuptureAccepteCommande = MyTmpProduit.RuptureAccepteCommande;
+                AncienProd.RuptureDefaut = MyTmpProduit.RuptureDefaut;
+                AncienProd.CaracteristiqueHauteur = MyTmpProduit.CaracteristiqueHauteur;
+                AncienProd.CaracteristiqueLargeur = MyTmpProduit.CaracteristiqueLargeur;
+                AncienProd.CaracteristiqueProfondeur = MyTmpProduit.CaracteristiqueProfondeur;
+                AncienProd.CaracteristiquePoids = MyTmpProduit.CaracteristiquePoids;
+                AncienProd.CaracteristiqueIdcomposition = MyTmpProduit.CaracteristiqueIdcomposition;
+                AncienProd.CaracteristiqueIdstyle = MyTmpProduit.CaracteristiqueIdstyle;
+                AncienProd.CaracteristiqueIdpropriete = MyTmpProduit.CaracteristiqueIdpropriete;
+                AncienProd.QteStk = MyTmpProduit.QteStk;
 
                 _context.Update(AncienProd);
 
+                #endregion
+                List<ImageProduit> ListeImgProd = _context.ImageProduits.Where(x => x.Idproduit == MyTmpProduit.Id).ToList();
 
+                _context.ImageProduits.RemoveRange(ListeImgProd);
+
+                //int i = 0;
+                //foreach (var obj in MyTmpProduit.ImgProd)
+                //{
+                //    if (i != 0)
+                //        CompteurImage = (Int32.Parse(CompteurImage) + 1).ToString();
+
+                //    obj.Idproduit = MyTmpProduit.Id;
+                //    obj.Idimage = CompteurImage;
+
+                //    _context.ImageProduits.Add(obj);
+                //    i++;
+                //}
+
+             //   myparam2.Valeur = (Int32.Parse(CompteurImage) + 1).ToString();
+                 
                 /// l'access groupe 
                 _context.SaveChanges();
                 trans.Commit();
